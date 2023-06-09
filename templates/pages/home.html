@@ -1,0 +1,77 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+<div class="rooms-bar">
+  <span>
+    <h5>ROOMS</h5>
+    {% if rooms.count < 1 %}
+    <p>No room available</p>
+    {% elif rooms.count == 1%}
+    <p>{{rooms.count}} room available</p>
+    {% elif rooms.count > 1 %}
+    <p>{{rooms.count}} rooms available</p>
+    {% endif %}
+  </span>
+  <a href="{% url 'create_room_page' %}">
+    <i class="bi bi-plus"></i>
+    <span>Create Room</span></a
+  >
+</div>
+{% if request.user.is_authenticated %} {% else %}
+<div
+  class="mt-3 rounded p-3"
+  style="background-color: rgba(255, 255, 255, 0.7); color: black"
+>
+  <p>
+    Petrotalk is an innovative application that connects students interested in
+    petroleum engineering, providing a platform for learning, collaboration, and
+    knowledge sharing. With its interactive features and engaging discussions,
+    Petrotalk brings together aspiring petroleum engineers to explore the
+    intricacies of the industry and foster a vibrant learning community. Login
+    or Register to start learning
+  </p>
+</div>
+{% endif %}
+<div class="room-name my-3">ALL ROOMS</div>
+<div class="rooms-container">
+  {% for room in rooms %}
+  <div class="room">
+    <div class="account">
+      <span>
+        <img
+          src="{{room.author.image.url}}"
+          alt=""
+          class="profile-img"
+          style="
+            object-fit: contain;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+          "
+        />
+        <span
+          ><a href="{% url 'profile_page' room.author.username %}"
+            >Host @{{room.author.username}}</a
+          ></span
+        >
+      </span>
+      <small> {{room.created_at|timesince}} ago</small>
+    </div>
+    <h5 class="my-3">
+      <a href="{% url 'room_page' room.id %}">{{room.name}}</a>
+    </h5>
+    <p>{{room.description}}</p>
+    <hr class="my-3" />
+    <div class="bottom">
+      <span>
+        <i class="bi bi-people"></i>
+        {% if room.participants.count > 1 %}
+        <small>{{room.participants.count}} people joined</small>
+        {% elif room.participants.count == 1 %}
+        <small>{{room.participants.count}} person joined</small>
+        {% else %}
+        <small>No participant</small>
+        {% endif %}
+      </span>
+      <small class="topic">{{room.topic}}</small>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

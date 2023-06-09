@@ -1,0 +1,44 @@
+{% extends 'base.html' %} {% block content %}
+<span>{% if page == "room_participants_page" %}</span>
+<div class="right_activity">
+  <h6 class="py-2" style="text-transform: uppercase">
+    ROOM PARTICIPANTS FOR "{{room.name}}" ({{room_participants.count}})
+  </h6>
+  <div class="activities" style="display: flex; flex-direction: column-reverse">
+    {% for participant in room_participants %}
+    <div class="act">
+      <span class="d-flex align-items-center">
+        <img src="{{participant.image.url}}" alt="" class="profile-img" />
+        <div class="ms-2">
+          {% if participant.first_name and participant.last_name %}
+          <span style="display: block"
+            >{{participant.first_name}}&nbsp;{{participant.last_name}}</span
+          >
+          {% else %} {{participant.username}} {% endif %}
+          <span style="display: block">@{{participant.username}}</span>
+        </div>
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="right_activity">
+  <h6 class="p-2">RECENT ACTIVITES</h6>
+  <div class="activities" style="display: flex; flex-direction: column-reverse">
+    {% for act in activity %}
+    <div class="act">
+      <span style="display: flex">
+        <img src="{{act.author.image.url}}" alt="" class="profile-img" />
+        <div class="ms-2">
+          <span style="display: block">@{{act.author.username}}</span>
+          <small style="display: block">{{act.created_at|timesince}}</small>
+        </div>
+      </span>
+      <p class="my-2">replied to "{{act.room}}"</p>
+      <div class="reply">{{act}}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %} {% endblock %}

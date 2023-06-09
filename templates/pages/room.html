@@ -1,0 +1,139 @@
+{% extends 'base.html' %} {% block content %}
+<form method="POST" style="padding-top: 80px !important">
+  {% csrf_token %}
+  <h5 class="form-header d-flex align-items-center">
+    <a style="text-align: left; color: black" href="/"
+      ><i class="bi bi-arrow-left"></i
+    ></a>
+    <span class="ms-3">{{room.name}}</span>
+  </h5>
+  <div class="d-flex align-items-center">
+    <img
+      src="{{room.author.image.url}}"
+      alt=""
+      class="profile-img"
+      style="
+        object-fit: contain;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+      "
+      width="40px"
+      height="40px"
+    />
+    <span
+      class="ms-sm-3 ms-2 d-flex align-items-center justify-content-between"
+      style="flex: 1"
+    >
+      <span class="d-block">
+        <h6>Host @{{room.author.username}}</h6>
+        <small>{{room.created_at|timesince}} ago.</small>
+      </span>
+      <span class="d-flex align-items-center">
+        {% if request.user == room.author %}
+        <span style="flex: 1; text-align: right">
+          <a href="{% url 'update_room_page' room.id %}"
+            ><i class="bi bi-pencil-square me-1"></i
+          ></a>
+          <a href="{% url 'delete_room_page' room.id %}"
+            ><i class="bi bi-trash me-2"></i></a
+        ></span>
+        {% endif %}
+        <a
+          class="room_members_mobile"
+          href="{% url 'room_participants_page' room.id %}"
+          ><i class="bi bi-people"></i
+        ></a>
+        <span class="room_members_desktop">
+          <i class="bi bi-people me-1"></i>
+          {% if room.participants.count > 1 %}
+          <small>{{room.participants.count}} people joined</small>
+          {% elif room.participants.count == 1 %}
+          <small>{{room.participants.count}} person joined</small>
+          {% else %}
+          <small>No participant</small>
+          {% endif %}
+        </span>
+      </span>
+    </span>
+  </div>
+  <div class="d-flex mb-3">{{room.description}}</div>
+  <div
+    id="messageBox"
+    class="message-cont p-2 pt-0"
+    style="
+      background-color: rgba(0, 0, 0, 0.5);
+      height: 300px;
+      overflow-y: scroll;
+      border-top-right-radius: 10px;
+      border-top-left-radius: 10px;
+      transition: 0.5s ease-in-out;
+    "
+  >
+    {% for message in room_messages %}
+    <div
+      class="message-cont p-2 mt-2 rounded"
+      style="
+        border-left: 3px solid rgba(256, 256, 256, 0.5);
+        background-color: rgba(256, 256, 256, 0.1);
+      "
+    >
+      <div class="d-flex">
+        <img
+          src="{{message.author.image.url}}"
+          alt=""
+          class="profile-img"
+          style="
+            object-fit: contain;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+          "
+          width="40px"
+          height="40px"
+        />
+        <span class="ms-3">
+          <h6>@{{message.author.username}}</h6>
+          <small>{{message.created_at|timesince}} ago.</small>
+        </span>
+        {% if request.user == message.author %}
+        <span style="flex: 1; text-align: right">
+          <a href="{% url 'delete_message_page' message.id %}"
+            ><i class="bi bi-trash"></i></a
+        ></span>
+        {% endif %}
+      </div>
+      <p class="text-start">{{message.body}}</p>
+    </div>
+    {% endfor%}
+  </div>
+  {% if request.user.is_authenticated %}
+  <div
+    class="input-group d-flex align-items-center justify-content-between"
+    style="border-top: 10px solid transparent"
+  >
+    <input
+      name="body"
+      type="text"
+      placeholder="Type your text here..."
+      required
+      style="
+        width: 80%;
+        margin: 0px !important;
+        padding: 5px !important;
+        background-color: rgba(256, 256, 256, 0.5);
+      "
+    />
+    <button
+      class="btn btn-outline-secondary d-inline"
+      style="
+        width: 20%;
+        margin: 0px !important;
+        padding: 5px !important;
+        background-color: rgba(256, 256, 256, 0.1);
+      "
+    >
+      <i class="bi bi-send-fill"></i>
+    </button>
+  </div>
+  {% endif %}
+</form>
+{% endblock %}
